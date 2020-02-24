@@ -33,10 +33,10 @@ jobs:
           name: "Generate apk"
           command: |
             ionic cordova build android --verbose
-            mkdir -p /output/apk
-            cp -r platforms/android/app/build/outputs/apk/debug/app-debug.apk /output/apk
+            mkdir -p /tmp/apk
+            cp -r platforms/android/app/build/outputs/apk/debug/app-debug.apk /tmp/apk
       - store_artifacts:
-          path: /output/apk
+          path: /tmp/apk
           destination: apks
 
   test-ios:
@@ -44,7 +44,7 @@ jobs:
       xcode: "10.2.0"
     working_directory: /Users/distiller/project
     environment:
-      FL_OUTPUT_DIR: output/ios
+      FL_OUTPUT_DIR: tmp/ipa
       FASTLANE_LANE: test
     shell: /bin/bash --login -o pipefail
     steps:
@@ -54,16 +54,16 @@ jobs:
           name: Fastlane
           command: bundle exec fastlane $FASTLANE_LANE
       - store_artifacts:
-          path: output/ios
+          path: tmp/ipa
       - store_test_results:
-          path: output/ios/scan
+          path: tmp/ipa/scan
 
   build-ios:
     macos:
       xcode: "10.2.0"
     working_directory: /Users/distiller/project
     environment:
-      FL_OUTPUT_DIR: output/ios
+      FL_OUTPUT_DIR: tmp/ipa
       FASTLANE_LANE: adhoc
     shell: /bin/bash --login -o pipefail
     steps:
@@ -73,14 +73,14 @@ jobs:
           name: Fastlane
           command: bundle exec fastlane $FASTLANE_LANE
       - store_artifacts:
-          path: output/ios/debug.ipa
+          path: tmp/ipa/debug.ipa
 
   beta:
     macos:
       xcode: "10.2.0"
     working_directory: /Users/distiller/project
     environment:
-      FL_OUTPUT_DIR: output/ios
+      FL_OUTPUT_DIR: tmp/ipa
       FASTLANE_LANE: beta
     shell: /bin/bash --login -o pipefail
     steps:
@@ -90,7 +90,7 @@ jobs:
           name: Fastlane
           command: bundle exec fastlane $FASTLANE_LANE
       - store_artifacts:
-          path: output/ios/debug.ipa
+          path: tmp/ipa/debug.ipa
 
 workflows:
   version: 2
